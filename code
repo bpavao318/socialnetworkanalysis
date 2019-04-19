@@ -1,0 +1,24 @@
+library(igraph)
+data<-read.csv("WhatsgoodlyData-6.csv")
+any(is.na("WhatsgoodlyData-6.csv"))
+head(data)
+data2<-data.frame(data$Answer,data$Count)
+data2
+net<-graph.data.frame(data2, directed = T)
+V(net)
+E(net)
+V(net)$label<- V(net)$name
+V(net)$degree<- degree(net)
+V(net)$label
+V(net)$degree
+hist(V(net)$degree,col="deeppink",main="Histogram of Node Degree",ylab="frequency",xlab="Degree of Vertices")
+plot(net,vertex.color = "deeppink", vertex.size =4, edge.arrow.size = 0.5,vertex.label.size = 0.8, vertex.label.color="black")
+plot(net,vertex.color = "deeppink",vertex.size = V(net)$degree*0.05, edge.arrow.size = 0.2, layout=layout.fruchterman.reingold)
+hs<-hub_score(net)$vector
+as<-authority.score(net)$vector
+par(mfrow=c(1,2))
+plot(net,vertex.size=hs*30, main='Hubs', vertex.color=cm.colors(52), edge.arrow.size=0.1, layout=layout.kamada.kawai)
+plot(net,vertex.size=as*30,main='Authorities',vertex.color=cm.colors(52),edge.arrow.size=0.1,layout=layout.kamada.kawai)
+net<-graph.data.frame(data2, directed= F)
+cnet<-cluster_edge_betweenness(net)
+plot(cnet,net,vertex.size=10,vertex.label.cex=0.8)
